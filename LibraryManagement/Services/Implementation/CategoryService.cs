@@ -2,7 +2,7 @@ using FluentResults;
 using LibraryManagement.Common.Pagination;
 using LibraryManagement.Helpers.Errors;
 using LibraryManagement.Models;
-using LibraryManagement.Models.DTOs.Categories;
+using LibraryManagement.Models.DTOs;
 using LibraryManagement.Repository.Interfaces;
 using LibraryManagement.Services.Contracts;
 using Mapster;
@@ -87,7 +87,7 @@ namespace LibraryManagement.Services.Implementation
                 return Result.Fail(new NotFoundError(nameof(Category), id));
             }
 
-            // OPTIMIZACIÓN: Solo viaja a la base de datos si el nombre realmente cambió en el formulario
+            // OPTIMIZATION: Solo viaja a la base de datos si el nombre realmente cambió en el formulario
             if (!string.Equals(category.Name, dto.Name, StringComparison.OrdinalIgnoreCase))
             {
                 if (await repository.ExistsByNameAsync(dto.Name, id))

@@ -1,6 +1,6 @@
 ﻿using FluentResults.Extensions.AspNetCore;
 using LibraryManagement.Common.Pagination;
-using LibraryManagement.Models.DTOs.Categories;
+using LibraryManagement.Models.DTOs;
 using LibraryManagement.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
 

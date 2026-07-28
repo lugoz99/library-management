@@ -1,5 +1,5 @@
 ﻿using LibraryManagement.Models;
-using LibraryManagement.Models.DTOs.Categories;
+using LibraryManagement.Models.DTOs;
 using Mapster;
 
 namespace LibraryManagement.Mappings
@@ -11,7 +11,6 @@ namespace LibraryManagement.Mappings
             // 1. CreateCategoryDto a Category
             config.NewConfig<CreateCategoryDto, Category>();
 
-            // 2. Category a CategoryResponse (CORREGIDO: Nombre exacto del record y sintaxis de Mapster)
             config.NewConfig<Category, CategoryResponseDto>();
 
             // 3. UpdateCategoryDto a Category

@@ -73,10 +73,10 @@ builder.Services.AddSwaggerGen(options =>
 
 // Register repositories and services in the Dependency Injection container.
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
+builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<ISubCategoryService, SubCategoryService>();
+builder.Services.AddScoped<IPublisherService,PublisherService>();
 
 var app = builder.Build();
 

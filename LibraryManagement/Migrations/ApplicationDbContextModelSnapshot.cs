@@ -40,6 +40,9 @@ namespace LibraryManagement.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid?>("ParentCategoryId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -48,48 +51,56 @@ namespace LibraryManagement.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
+                    b.HasIndex("ParentCategoryId");
+
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("LibraryManagement.Models.SubCategory", b =>
+            modelBuilder.Entity("LibraryManagement.Models.Publisher", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Website")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("Name", "CategoryId")
+                    b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("SubCategories");
+                    b.ToTable("Publishers");
                 });
 
-            modelBuilder.Entity("LibraryManagement.Models.SubCategory", b =>
+            modelBuilder.Entity("LibraryManagement.Models.Category", b =>
                 {
-                    b.HasOne("LibraryManagement.Models.Category", "Category")
+                    b.HasOne("LibraryManagement.Models.Category", "ParentCategory")
                         .WithMany("SubCategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ParentCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Category");
+                    b.Navigation("ParentCategory");
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.Category", b =>

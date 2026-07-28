@@ -1,9 +1,5 @@
 ﻿using FluentResults;
 using LibraryManagement.Models.DTOs;
-using LibraryManagement.Models.DTOs.Categories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using LibraryManagement.Common.Pagination;
 
 namespace LibraryManagement.Services.Contracts

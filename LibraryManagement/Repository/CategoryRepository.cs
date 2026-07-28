@@ -16,15 +16,13 @@ namespace LibraryManagement.Repository
         public async Task<Category?> GetByIdAsync(Guid id)
         {
             return await context.Categories
-                .Include(c => c.SubCategories)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public IQueryable<Category> GetAllQueryable()
         {
             return context.Categories
-                .AsNoTracking()
-                .Include(c => c.SubCategories);
+                .AsNoTracking();
         }
 
         // Busca si hay alguna categoría con este nombre, pero ignora mi propio registro
@@ -58,7 +56,7 @@ namespace LibraryManagement.Repository
 
         public void Delete(Guid id)
         {
-            var category = new Category { Id = id };
+            var category = new Category { Id = id , Name = string.Empty }; 
             context.Categories.Remove(category);
         }
 
