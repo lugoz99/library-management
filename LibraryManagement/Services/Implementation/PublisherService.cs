@@ -1,4 +1,7 @@
-﻿using FluentResults;
+﻿using System.Globalization;
+using FluentResults;
+using LibraryManagement.Helpers.Errors;
+using LibraryManagement.Models;
 using LibraryManagement.Models.DTOs;
 using LibraryManagement.Repository.Interfaces;
 using LibraryManagement.Services.Contracts;
@@ -8,30 +11,76 @@ namespace LibraryManagement.Services.Implementation;
 
 public class PublisherService(
     IPublisherRepository publisherRepository,
-    IMapper mapper):IPublisherService
+    IMapper mapper) : IPublisherService
 {
-    public Task<Result<PublisherDto>> GetAllPublisher(CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<PublisherDto>>> GetAllPublisher(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var publishers = await publisherRepository.GetAllAsync(cancellationToken);
+        return Result.Ok(mapper.Map<IEnumerable<PublisherDto>>(publishers));
     }
 
-    public Task<Result<PublisherDto>> GetPublisherByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Result<PublisherDto>> GetPublisherByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var publisher = await publisherRepository.GetByIdAsync(id, cancellationToken);
+        return publisher is null ? 
+            Result.Fail<PublisherDto>(new NotFoundError(nameof(PublisherDto), id)) 
+            : Result.Ok(mapper.Map<PublisherDto>(publisher));
     }
 
-    public Task<Result<PublisherDto>> CreatePublisherAsync(CreatePublisherDto dto, CancellationToken cancellationToken)
+    public async Task<Result<PublisherDto>> CreatePublisherAsync(CreatePublisherDto dto, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var name = CultureInfo.CurrentCulture.TextInfo
+            .ToTitleCase(dto.Name.Trim().ToLower());
+            
+        var exists = await publisherRepository.ExistsByNameAsync(name, null, cancellationToken);
+        if (exists)
+        {
+            return Result.Fail<PublisherDto>(new ConflictError("cannot create publisher, the publisher already exists!"));
+        }
+        
+        var publisher = mapper.Map<Publisher>(dto);
+        publisher.Name = name;
+        
+        await publisherRepository.AddAsync(publisher, cancellationToken);
+        return Result.Ok(mapper.Map<PublisherDto>(publisher));
     }
 
-    public Task<Result<PublisherDto>> UpdatePublisherAsync(Guid id, UpdatePublisherDto dto, CancellationToken cancellationToken)
+    public async Task<Result<PublisherDto>> UpdatePublisherAsync(Guid id, UpdatePublisherDto dto, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var publisher = await publisherRepository.GetByIdAsync(id, cancellationToken);
+        if (publisher is null)
+        {
+            return Result.Fail<PublisherDto>(new NotFoundError(nameof(Publisher), id));
+        }
+    
+        // Normalizamos el nombre
+        var formattedName = CultureInfo.CurrentCulture.TextInfo
+            .ToTitleCase(dto.Name.Trim().ToLower());
+
+        // Verificamos duplicados ignorando el registro actual
+        var exists = await publisherRepository.ExistsByNameAsync(formattedName, id, cancellationToken);
+        if (exists)
+        { 
+            return Result.Fail<PublisherDto>(new ConflictError("Cannot update publisher, a publisher with this name already exists."));
+        }
+    
+        // Mapeamos las propiedades y asignamos el nombre limpio
+        mapper.Map(dto, publisher);
+        publisher.Name = formattedName;
+    
+        await publisherRepository.UpdateAsync(publisher, cancellationToken);
+        return Result.Ok(mapper.Map<PublisherDto>(publisher));
     }
 
-    public Task<Result> DeleteCategoryAsync(Guid id)
+    public async Task<Result> DeletePublisherAsync(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var publisher = await publisherRepository.GetByIdAsync(id, cancellationToken);
+        if (publisher is null)
+        {
+            return Result.Fail(new NotFoundError(nameof(PublisherDto), id));
+        }
+
+        await publisherRepository.DeleteAsync(publisher, cancellationToken);
+        return Result.Ok();
     }
 }

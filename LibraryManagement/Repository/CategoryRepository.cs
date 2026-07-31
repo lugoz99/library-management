@@ -1,32 +1,29 @@
-﻿// Repository/CategoryRepository.cs
-
-using LibraryManagement.Data;
+﻿using LibraryManagement.Data;
 using LibraryManagement.Models;
 using LibraryManagement.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Repository
 {
-    // This class inherits the common CRUD from Repository<Category>
-    // We only add the extra method here
     public class CategoryRepository(ApplicationDbContext context) : ICategoryRepository
     {
         #region Métodos de Lectura (Queries)
 
-        public async Task<Category?> GetByIdAsync(Guid id)
+        public async Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await context.Categories
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .Include(c => c.SubCategories)
+                .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
         }
 
         public IQueryable<Category> GetAllQueryable()
         {
+            // AsNoTracking no recibe cancellationToken directamente porque devuelve un IQueryable diferido
             return context.Categories
                 .AsNoTracking();
         }
 
-        // Busca si hay alguna categoría con este nombre, pero ignora mi propio registro
-        public async Task<bool> ExistsByNameAsync(string name, Guid? excludeId = null)
+        public async Task<bool> ExistsByNameAsync(string name, Guid? excludeId = null, CancellationToken cancellationToken = default)
         {
             var query = context.Categories
                 .AsNoTracking()
@@ -37,36 +34,29 @@ namespace LibraryManagement.Repository
                 query = query.Where(c => c.Id != excludeId.Value);
             }
 
-            return await query.AnyAsync();
+            return await query.AnyAsync(cancellationToken);
         }
 
         #endregion
 
         #region Métodos de Escritura (Commands)
 
-        public async Task AddAsync(Category category)
+        public async Task AddAsync(Category category, CancellationToken cancellationToken = default)
         {
-            await context.Categories.AddAsync(category);
+            await context.Categories.AddAsync(category, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
         }
 
-        public void Update(Category category)
+        public async Task UpdateAsync(Category category, CancellationToken cancellationToken = default)
         {
             context.Categories.Update(category);
+            await context.SaveChangesAsync(cancellationToken);
         }
 
-        public void Delete(Guid id)
+        public async Task DeleteAsync(Category category, CancellationToken cancellationToken = default)
         {
-            var category = new Category { Id = id , Name = string.Empty }; 
             context.Categories.Remove(category);
-        }
-
-        #endregion
-
-        #region Persistencia
-
-        public async Task SaveChangesAsync()
-        {
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
         }
 
         #endregion

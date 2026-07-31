@@ -4,15 +4,14 @@ namespace LibraryManagement.Repository.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task<Category?> GetByIdAsync(Guid id);
+        // Lectura
+        Task<Category?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
         IQueryable<Category> GetAllQueryable();
-        Task<bool> ExistsByNameAsync(string name, Guid? excludeId = null);
+        Task<bool> ExistsByNameAsync(string name, Guid? excludeId = null, CancellationToken cancellationToken = default);
     
-        Task AddAsync(Category category);
-        void Update(Category category);
-        void Delete(Guid id);
-    
-        // Persistencia (Unit of Work)
-        Task SaveChangesAsync();
+        // Escritura
+        Task AddAsync(Category category, CancellationToken cancellationToken = default);
+        Task UpdateAsync(Category category, CancellationToken cancellationToken = default);
+        Task DeleteAsync(Category category, CancellationToken cancellationToken = default);
     }
 }

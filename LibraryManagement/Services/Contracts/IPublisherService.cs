@@ -5,17 +5,16 @@ namespace LibraryManagement.Services.Contracts;
 
 public interface IPublisherService
 {
-    Task<Result<PublisherDto>> GetAllPublisher(CancellationToken cancellationToken);
+    Task<Result<IEnumerable<PublisherDto>>> GetAllPublisher(CancellationToken cancellationToken = default);
     
-    Task<Result<PublisherDto>> GetPublisherByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<Result<PublisherDto>> GetPublisherByIdAsync(Guid id, CancellationToken cancellationToken = default);
     
-    Task<Result<PublisherDto>> CreatePublisherAsync(CreatePublisherDto dto, CancellationToken cancellationToken);
+    Task<Result<PublisherDto>> CreatePublisherAsync(CreatePublisherDto dto, CancellationToken cancellationToken = default);
     
-    Task<Result<PublisherDto>> UpdatePublisherAsync(Guid id, UpdatePublisherDto dto, CancellationToken cancellationToken);
+    Task<Result<PublisherDto>> UpdatePublisherAsync(Guid id, UpdatePublisherDto dto, CancellationToken cancellationToken = default);
 
-    Task<Result> DeleteCategoryAsync(Guid id);
+    Task<Result> DeletePublisherAsync(Guid id, CancellationToken cancellationToken = default);
     
     
-    // TODO: Pagination is missing
-
+    // todo: pagination is missing
 }

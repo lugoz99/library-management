@@ -2,11 +2,12 @@
   sql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: sqlserver2022
+    restart: unless-stopped
     ports:
       - "${DB_PORT}:1433" # Toma el puerto 1433 del .env
     environment:
       ACCEPT_EULA: "1"
-      MSSQL_SA_PASSWORD: "${DB_PASSWORD}" # Toma la contraseña del .env
+      MSSQL_SA_PASSWORD: "${DB_PASSWORD}" 
       MSSQL_PID: "Developer"
     volumes:
       - sqlserverdata:/var/opt/mssql

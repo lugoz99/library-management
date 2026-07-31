@@ -49,6 +49,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         sqlServerOptions.EnableRetryOnFailure()));
 
 // =====================================================
+// S3 CLOUDFLARE R2
+// =====================================================
+
+// =====================================================
 // API AND DOCUMENTATION SERVICES
 // =====================================================
 builder.Services.AddControllers();
@@ -77,6 +81,9 @@ builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IPublisherService,PublisherService>();
+
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
 
 var app = builder.Build();
 

@@ -7,6 +7,6 @@ public class Author:BaseEntity
     public string? LastNames { get; set; }
     public string? Biography { get; set; }
     public string? Nationality { get; set; }
-    public DateTime? DateOfBirth { get; set; }
-    public DateTime? DateOfDeath { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
+    public DateOnly? DateOfDeath { get; set; }
 }

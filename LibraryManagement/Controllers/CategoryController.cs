@@ -11,52 +11,55 @@ namespace LibraryManagement.Controllers
     public class CategoryController(ICategoryService categoryService) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryResponseDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAll(CancellationToken cancellationToken)
         {
-            var result = await categoryService.GetAllCategoriesAsync();
+            var result = await categoryService.GetAllCategoriesAsync(cancellationToken);
             return result.ToActionResult();
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<CategoryResponseDto>> GetById(Guid id)
+        public async Task<ActionResult<CategoryDto>> GetById(Guid id, CancellationToken cancellationToken)
         {
-            var result = await categoryService.GetCategoryByIdAsync(id);
+            var result = await categoryService.GetCategoryByIdAsync(id, cancellationToken);
             return result.ToActionResult();
         }
 
         [HttpGet("paged")]
-        public async Task<ActionResult<PagedResult<CategoryResponseDto>>> GetPaged(
-            [FromQuery] PaginationParams pagination)
+        public async Task<ActionResult<PagedResult<CategoryDto>>> GetPaged(
+            [FromQuery] PaginationParams pagination,
+            CancellationToken cancellationToken)
         {
-
             var result = await categoryService.GetPagedCategoriesAsync(
                 pagination.PageNumber,
-                pagination.PageSize);
+                pagination.PageSize,
+                cancellationToken);
 
             return result.ToActionResult();
         }
 
         [HttpPost]
-        public async Task<ActionResult<CategoryResponseDto>> Create(
-            [FromBody] CreateCategoryDto dto)
+        public async Task<ActionResult<CategoryDto>> Create(
+            [FromBody] CreateCategoryDto createDto,
+            CancellationToken cancellationToken)
         {
-            var result = await categoryService.CreateCategoryAsync(dto);
+            var result = await categoryService.CreateCategoryAsync(createDto, cancellationToken);
             return result.ToActionResult();
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<ActionResult<CategoryResponseDto>> Update(
+        public async Task<ActionResult<CategoryDto>> Update(
             Guid id,
-            [FromBody] UpdateCategoryDto dto)
+            [FromBody] UpdateCategoryDto dto,
+            CancellationToken cancellationToken)
         {
-            var result = await categoryService.UpdateCategoryAsync(id, dto);
+            var result = await categoryService.UpdateCategoryAsync(id, dto, cancellationToken);
             return result.ToActionResult();
         }
 
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            var result = await categoryService.DeleteCategoryAsync(id);
+            var result = await categoryService.DeleteCategoryAsync(id, cancellationToken);
             return result.ToActionResult();
         }
     }

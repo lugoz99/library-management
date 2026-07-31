@@ -18,39 +18,41 @@ namespace LibraryManagement.Services.Implementation
     {
         #region Métodos de Lectura (Queries)
 
-        public async Task<Result<IEnumerable<CategoryResponseDto>>> GetAllCategoriesAsync()
+        public async Task<Result<IEnumerable<CategoryDto>>> GetAllCategoriesAsync(CancellationToken cancellationToken = default)
         {
             var items = await repository
                 .GetAllQueryable()
-                .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
-            return Result.Ok(items.Adapt<IEnumerable<CategoryResponseDto>>());
+            return Result.Ok(items.Adapt<IEnumerable<CategoryDto>>());
         }
 
-        public async Task<Result<CategoryResponseDto>> GetCategoryByIdAsync(Guid id)
+        public async Task<Result<CategoryDetailDto>> GetCategoryByIdAsync(Guid id,
+            CancellationToken cancellationToken)
         {
-            var category = await repository.GetByIdAsync(id);
+            var category = await repository
+                .GetByIdAsync(id, cancellationToken);
 
             if (category is null)
             {
                 return Result.Fail(new NotFoundError(nameof(Category), id));
             }
 
-            return Result.Ok(category.Adapt<CategoryResponseDto>());
+            return Result.Ok(mapper.Map<CategoryDetailDto>(category));
         }
 
-        public async Task<Result<PagedResult<CategoryResponseDto>>> GetPagedCategoriesAsync(
+        public async Task<Result<PagedResult<CategoryDto>>> GetPagedCategoriesAsync(
             int pageNumber,
-            int pageSize)
+            int pageSize,
+            CancellationToken cancellationToken = default)
         {
             var query = repository.GetAllQueryable();
 
-            var paged = await query.ToPagedAsync(pageNumber, pageSize);
+            var paged = await query.ToPagedAsync(pageNumber, pageSize, cancellationToken);
 
-            var response = new PagedResult<CategoryResponseDto>()
+            var response = new PagedResult<CategoryDto>()
             {
-                Items = paged.Items.Adapt<IEnumerable<CategoryResponseDto>>(),
+                Items = paged.Items.Adapt<IEnumerable<CategoryDto>>(),
                 PageNumber = paged.PageNumber,
                 PageSize = paged.PageSize,
                 TotalCount = paged.TotalCount
@@ -63,34 +65,32 @@ namespace LibraryManagement.Services.Implementation
 
         #region Métodos de Escritura (Commands)
 
-        public async Task<Result<CategoryResponseDto>> CreateCategoryAsync(CreateCategoryDto dto)
+        public async Task<Result<CategoryDto>> CreateCategoryAsync(CreateCategoryDto dto, CancellationToken cancellationToken = default)
         {
-            if (await repository.ExistsByNameAsync(dto.Name))
+            if (await repository.ExistsByNameAsync(dto.Name, cancellationToken: cancellationToken))
             {
                 return Result.Fail(new ConflictError($"A category with the name '{dto.Name}' already exists."));
             }
 
             var category = dto.Adapt<Category>();
 
-            await repository.AddAsync(category);
-            await repository.SaveChangesAsync();
+            await repository.AddAsync(category, cancellationToken);
 
-            return Result.Ok(category.Adapt<CategoryResponseDto>());
+            return Result.Ok(category.Adapt<CategoryDto>());
         }
 
-        public async Task<Result<CategoryResponseDto>> UpdateCategoryAsync(Guid id, UpdateCategoryDto dto)
+        public async Task<Result<CategoryDto>> UpdateCategoryAsync(Guid id, UpdateCategoryDto dto, CancellationToken cancellationToken = default)
         {
-            var category = await repository.GetByIdAsync(id);
+            var category = await repository.GetByIdAsync(id, cancellationToken);
 
             if (category is null)
             {
                 return Result.Fail(new NotFoundError(nameof(Category), id));
             }
 
-            // OPTIMIZATION: Solo viaja a la base de datos si el nombre realmente cambió en el formulario
             if (!string.Equals(category.Name, dto.Name, StringComparison.OrdinalIgnoreCase))
             {
-                if (await repository.ExistsByNameAsync(dto.Name, id))
+                if (await repository.ExistsByNameAsync(dto.Name, id, cancellationToken))
                 {
                     return Result.Fail(new ConflictError($"Another category with the name '{dto.Name}' already exists."));
                 }
@@ -99,24 +99,21 @@ namespace LibraryManagement.Services.Implementation
             mapper.Map(dto, category);
             category.UpdatedAt = DateTime.UtcNow;
 
-            repository.Update(category);
-            await repository.SaveChangesAsync();
+            await repository.UpdateAsync(category, cancellationToken);
 
-            return Result.Ok(category.Adapt<CategoryResponseDto>());
+            return Result.Ok(category.Adapt<CategoryDto>());
         }
 
-        public async Task<Result> DeleteCategoryAsync(Guid id)
+        public async Task<Result> DeleteCategoryAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var category = await repository.GetByIdAsync(id);
+            var category = await repository.GetByIdAsync(id, cancellationToken);
 
             if (category is null)
             {
                 return Result.Fail(new NotFoundError(nameof(Category), id));
             }
 
-            // OPTIMIZACIÓN: Ahora enviamos solo el 'id' al método Delete del repositorio
-            repository.Delete(id);
-            await repository.SaveChangesAsync();
+            await repository.DeleteAsync(category, cancellationToken);
 
             return Result.Ok();
         }

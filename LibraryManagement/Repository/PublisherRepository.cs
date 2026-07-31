@@ -5,15 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Repository;
 
-public class PublisherRepository(ApplicationDbContext context):IPublisherRepository
+public class PublisherRepository(ApplicationDbContext context) : IPublisherRepository
 {
-    public async Task<IReadOnlyList<Publisher>> GetAllAsync(CancellationToken cancellationToken = default)
+    // Gets a list of all publishers in the database
+    public async Task<IEnumerable<Publisher>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await context.Publishers
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 
+    // Finds a specific publisher by its unique identifier, or returns null if not found
     public async Task<Publisher?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await context.Publishers
@@ -21,40 +23,39 @@ public class PublisherRepository(ApplicationDbContext context):IPublisherReposit
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
+    // Adds a new publisher and saves changes immediately
     public async Task AddAsync(Publisher publisher, CancellationToken cancellationToken = default)
     {
-        context.Publishers.Add(publisher);
+        await context.Publishers.AddAsync(publisher, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
     }
 
-    public void Update(Publisher publisher)
+    // Updates an existing publisher and saves changes immediately
+    public async Task UpdateAsync(Publisher publisher, CancellationToken cancellationToken = default)
     {
         context.Publishers.Update(publisher);
-    }
-
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        await context.Publishers
-            .Where(p => p.Id == id)
-            .ExecuteDeleteAsync(cancellationToken);
-    }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
         await context.SaveChangesAsync(cancellationToken);
     }
 
+    // Removes the publisher and saves changes immediately
+    public async Task DeleteAsync(Publisher publisher, CancellationToken cancellationToken = default)
+    {
+        context.Publishers.Remove(publisher);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    // Checks if a publisher with this name already exists, optionally ignoring a specific ID during updates
     public async Task<bool> ExistsByNameAsync(string name, Guid? excludeId = null, CancellationToken cancellationToken = default)
     {
-        
-        var query =  context.Publishers
+        var query = context.Publishers
             .AsNoTracking()
             .Where(p => p.Name == name);
         
-        if(excludeId.HasValue)
+        if (excludeId.HasValue)
         {
             query = query.Where(p => p.Id != excludeId.Value);
         }
+        
         return await query.AnyAsync(cancellationToken);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-// ReSharper disable PropertyCanBeMadeInitOnly.Global
 
 namespace LibraryManagement.Models
 {
@@ -20,5 +19,8 @@ namespace LibraryManagement.Models
 
         // Navigation Property: List of subcategories inside this category
         public ICollection<Category> SubCategories { get; set; } = [];
+        
+        
+        public ICollection<Book> Books { get; set; } = [];
     }
 }

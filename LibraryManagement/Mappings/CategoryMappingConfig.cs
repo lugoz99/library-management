@@ -9,14 +9,18 @@ namespace LibraryManagement.Mappings
         public void Register(TypeAdapterConfig config)
         {
             // 1. CreateCategoryDto a Category
-            config.NewConfig<CreateCategoryDto, Category>();
+            TypeAdapterConfig<Category,CategoryDto>
+                .NewConfig().Ignore(dest => dest.Id);
 
-            config.NewConfig<Category, CategoryResponseDto>();
+            config.NewConfig<Category, CategoryDto>();
 
             // 3. UpdateCategoryDto a Category
             config.NewConfig<UpdateCategoryDto, Category>()
                 .IgnoreNullValues(true)
                 .Ignore(c => c.Id);
+            
+            
+            config.NewConfig<Category, CategoryDetailDto>();
         }
     }
 }
