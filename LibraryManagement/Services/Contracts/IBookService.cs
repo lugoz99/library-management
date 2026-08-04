@@ -12,4 +12,11 @@ public interface IBookService
     public Task<Result<BookDto>> CreateBookAsync(CreateBookDto dto,CancellationToken cancellationToken = default);
     
     public Task<Result> DeleteBookAsync(Guid id,CancellationToken cancellationToken = default);
+
+
+
+    public Task<Result<BookResponseDto>> CreateBookWithAuthors(CreateBookAuthorskDto dto,CancellationToken token);
+    
+    
+    Task<Result> AddAuthorToBookAsync(Guid bookId, AddBookAuthorDto dto, CancellationToken ct = default);
 }

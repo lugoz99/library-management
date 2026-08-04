@@ -8,6 +8,8 @@ namespace LibraryManagement.Repository;
 
 public class AuthorRepository(ApplicationDbContext context):IAuthorRepository
 {
+    private IAuthorRepository _authorRepositoryImplementation;
+
     public async Task<IEnumerable<Author>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await context.Authors
@@ -38,5 +40,19 @@ public class AuthorRepository(ApplicationDbContext context):IAuthorRepository
     {
         context.Authors.Remove(author);
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Author>> GetByIdsAsync(
+        List<Guid> ids,
+        CancellationToken cancellationToken = default)
+    {
+        return await context.Authors
+            .Where(x => ids.Contains(x.Id))
+            .ToListAsync(cancellationToken);
+    }
+    
+    public Task<int> CountByIdsAsync(IEnumerable<Guid> ids, CancellationToken ct = default)
+    {
+        return context.Authors.CountAsync(a => ids.Contains(a.Id), ct);
     }
 }

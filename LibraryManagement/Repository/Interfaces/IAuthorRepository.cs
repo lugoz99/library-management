@@ -14,4 +14,13 @@ public interface IAuthorRepository
 
     Task DeleteAsync(Author author, CancellationToken cancellationToken=default);
 
+
+
+    Task<IReadOnlyList<Author>> GetByIdsAsync(
+        List<Guid> ids,
+        CancellationToken cancellationToken = default);
+    
+    Task<int> CountByIdsAsync(IEnumerable<Guid> ids, CancellationToken ct = default);
+
+
 }

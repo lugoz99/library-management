@@ -21,5 +21,6 @@ public class BookConfiguration:IEntityTypeConfiguration<Book>
             .WithMany(p => p.Books)
             .HasForeignKey(b => b.PublisherId)
             .OnDelete(DeleteBehavior.Cascade);
+        
     }
 }

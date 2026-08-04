@@ -9,15 +9,18 @@ namespace LibraryManagement.Data
             public DbSet<Category> Categories { get; set; }
             public DbSet<Publisher> Publishers { get; set; }
             public DbSet<Author> Authors { get; set; }
+            
+            public DbSet<BookAuthors> BookAuthors { get; set; }
             public DbSet<Book> Books { get; set; }
             
             public DbSet<BookFormat> BookFormats { get; set; }
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
+                // creador de modelos
                 base.OnModelCreating(modelBuilder);
 
-                // ¡Esto busca automáticamente todas las clases que implementen IEntityTypeConfiguration en este ensamblado!
+                // Esto busca automáticamente todas las clases que implementen IEntityTypeConfiguration en este ensamblado!
                 modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
             }
 

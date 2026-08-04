@@ -9,4 +9,7 @@ public class Author:BaseEntity
     public string? Nationality { get; set; }
     public DateOnly? DateOfBirth { get; set; }
     public DateOnly? DateOfDeath { get; set; }
+    
+    public ICollection<BookAuthors> BookAuthors { get; set; } = [];
+
 }

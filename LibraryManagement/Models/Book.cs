@@ -30,5 +30,7 @@ public class Book:BaseEntity
     public required string Language { get; set; }
     public ICollection<BookFormat> BooksFormats { get; set; } = [];
 
-    
+    public ICollection<BookAuthors> BookAuthors { get; set; } = [];
+
+
 }

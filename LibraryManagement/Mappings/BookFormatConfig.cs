@@ -24,5 +24,11 @@ public class BookFormatConfig
 
         TypeAdapterConfig<BookFormat, BookFormatDto>
             .NewConfig();
+
+
+
+       
+        
+      
     }
 }

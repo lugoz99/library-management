@@ -85,6 +85,12 @@ builder.Services.AddScoped<IPublisherService,PublisherService>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IBookService, BookService>();
+
+builder.Services.AddScoped<IBookFormatRepository, BookFormatRepository>();
+builder.Services.AddScoped<IBookFormatService, BookFormatService>();
+
 var app = builder.Build();
 
 // =====================================================
