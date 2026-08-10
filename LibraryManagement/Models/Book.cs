@@ -31,6 +31,10 @@ public class Book:BaseEntity
     public ICollection<BookFormat> BooksFormats { get; set; } = [];
 
     public ICollection<BookAuthors> BookAuthors { get; set; } = [];
+    
+    public ICollection<Review> Reviews { get; set; } = [];
+    
+    public ICollection<WishList> WishLists { get; set; } = [];
 
 
 }

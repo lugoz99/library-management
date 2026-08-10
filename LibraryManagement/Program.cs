@@ -1,10 +1,7 @@
 using FluentResults.Extensions.AspNetCore;
 using LibraryManagement.Data;
+using LibraryManagement.Extensions;
 using LibraryManagement.Helpers;
-using LibraryManagement.Repository;
-using LibraryManagement.Repository.Interfaces;
-using LibraryManagement.Services.Contracts;
-using LibraryManagement.Services.Implementation;
 using Mapster;
 using MapsterMapper;
 using Scalar.AspNetCore;
@@ -76,20 +73,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // Register repositories and services in the Dependency Injection container.
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
-
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<IPublisherService,PublisherService>();
-
-builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
-builder.Services.AddScoped<IAuthorService, AuthorService>();
-
-builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<IBookService, BookService>();
-
-builder.Services.AddScoped<IBookFormatRepository, BookFormatRepository>();
-builder.Services.AddScoped<IBookFormatService, BookFormatService>();
+builder.Services.AddRepositories();
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 

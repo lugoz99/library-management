@@ -22,5 +22,10 @@ public class BookConfiguration:IEntityTypeConfiguration<Book>
             .HasForeignKey(b => b.PublisherId)
             .OnDelete(DeleteBehavior.Cascade);
         
+        builder.HasMany(b => b.Reviews)
+            .WithOne(r => r.Book)
+            .HasForeignKey(r => r.BookId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
     }
 }

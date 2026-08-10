@@ -1,6 +1,5 @@
 ﻿using LibraryManagement.Data;
 using LibraryManagement.Models;
-using LibraryManagement.Models.DTOs;
 using LibraryManagement.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +7,6 @@ namespace LibraryManagement.Repository;
 
 public class AuthorRepository(ApplicationDbContext context):IAuthorRepository
 {
-    private IAuthorRepository _authorRepositoryImplementation;
 
     public async Task<IEnumerable<Author>> GetAllAsync(CancellationToken cancellationToken = default)
     {

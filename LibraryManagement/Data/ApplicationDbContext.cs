@@ -15,6 +15,11 @@ namespace LibraryManagement.Data
             
             public DbSet<BookFormat> BookFormats { get; set; }
 
+            
+            public DbSet<Review> Reviews { get; set; }
+            
+            
+            public DbSet<WishList> WishLists { get; set; }
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
                 // creador de modelos
