@@ -1,5 +1,8 @@
-﻿namespace LibraryManagement.Models.DTOs;
+﻿using JetBrains.Annotations;
 
+namespace LibraryManagement.Models.DTOs;
+
+[UsedImplicitly]
 public record ReviewDto(
     Guid Id,
     string Title,
@@ -8,6 +11,7 @@ public record ReviewDto(
     string? ReviewName,
     Guid BookId
     );
+[UsedImplicitly]
 public record CreateReviewDto(
     string Title,
     string? Comment,

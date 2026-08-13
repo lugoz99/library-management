@@ -10,31 +10,36 @@ namespace LibraryManagement.Controllers;
 public class BooksController(IBookService bookService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<BookDto>>> GetAll(CancellationToken cancellationToken = default)
+    public async Task<ActionResult<IEnumerable<BookDto>>> GetAll(
+        CancellationToken cancellationToken = default)
     {
-        var bookFormats = await bookService.GetAllBooksAsync(cancellationToken);
-        return bookFormats.ToActionResult();
+        var result = await bookService.GetAllBooksAsync(cancellationToken);
+        return result.ToActionResult();
     }
 
-    [HttpGet("id:guid")]
-    public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAll(Guid id)
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<BookResponseDto>> GetById(
+        Guid id,
+        CancellationToken cancellationToken = default)
     {
-        var result = await bookService.GetBookByIdAsync(id);
+        var result = await bookService.GetBookByIdAsync(id, cancellationToken);
         return result.ToActionResult();
     }
 
     // Create a simple book, without authors
     [HttpPost]
-    public async Task<ActionResult<BookDto>> Create([FromBody] CreateBookDto dto)
+    public async Task<ActionResult<BookDto>> Create(
+        [FromBody] CreateBookDto dto,
+        CancellationToken cancellationToken = default)
     {
-        var result = await bookService.CreateBookAsync(dto);
+        var result = await bookService.CreateBookAsync(dto, cancellationToken);
         return result.ToActionResult();
     }
 
     // Create a book together with its authors in one request
     [HttpPost("with-authors")]
-    public async Task<ActionResult<BookResponseDto>> CreateWithAuthors(
-        [FromBody] CreateBookAuthorskDto dto,
+    public async Task<ActionResult<CreateBookWithAuthorsResponseDto>> CreateWithAuthors(
+        [FromBody] CreateBookWithAuthorsDto dto,
         CancellationToken cancellationToken = default)
     {
         var result = await bookService.CreateBookWithAuthors(dto, cancellationToken);

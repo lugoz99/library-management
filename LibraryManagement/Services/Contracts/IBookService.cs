@@ -5,18 +5,27 @@ namespace LibraryManagement.Services.Contracts;
 
 public interface IBookService
 {
-    public Task<Result<IEnumerable<BookDto>>> GetAllBooksAsync(CancellationToken cancellationToken);
-    
-    public Task<Result<BookDto>> GetBookByIdAsync(Guid id,CancellationToken cancellationToken = default);
-    
-    public Task<Result<BookDto>> CreateBookAsync(CreateBookDto dto,CancellationToken cancellationToken = default);
-    
-    public Task<Result> DeleteBookAsync(Guid id,CancellationToken cancellationToken = default);
+    Task<Result<IEnumerable<BookDto>>> GetAllBooksAsync(
+        CancellationToken cancellationToken = default);
 
+    Task<Result<BookResponseDto>> GetBookByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
 
+    Task<Result<BookDto>> CreateBookAsync(
+        CreateBookDto dto,
+        CancellationToken cancellationToken = default);
 
-    public Task<Result<BookResponseDto>> CreateBookWithAuthors(CreateBookAuthorskDto dto,CancellationToken token);
-    
-    
-    Task<Result> AddAuthorToBookAsync(Guid bookId, AddBookAuthorDto dto, CancellationToken ct = default);
+    Task<Result> DeleteBookAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<CreateBookWithAuthorsResponseDto>> CreateBookWithAuthors(
+        CreateBookWithAuthorsDto dto,
+        CancellationToken token = default);
+
+    Task<Result> AddAuthorToBookAsync(
+        Guid bookId,
+        AddBookAuthorDto dto,
+        CancellationToken ct = default);
 }

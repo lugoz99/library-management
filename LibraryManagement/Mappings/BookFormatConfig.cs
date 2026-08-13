@@ -4,31 +4,22 @@ using Mapster;
 
 namespace LibraryManagement.Mappings;
 
-public class BookFormatConfig
+public class BookFormatConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        TypeAdapterConfig<CreateBookFormatDto, BookFormat>
-            .NewConfig()
+        config.NewConfig<CreateBookFormatDto, BookFormat>()
             .Ignore(dest => dest.Id)
             .Ignore(dest => dest.KeyUrl!)
             .Ignore(dest => dest.Book!);
 
-        TypeAdapterConfig<UpdateBookFormatDto, BookFormat>
-            .NewConfig()
+        config.NewConfig<UpdateBookFormatDto, BookFormat>()
             .IgnoreNullValues(true)
             .Ignore(dest => dest.Id)
             .Ignore(dest => dest.BookId)
             .Ignore(dest => dest.KeyUrl!)
             .Ignore(dest => dest.Book!);
 
-        TypeAdapterConfig<BookFormat, BookFormatDto>
-            .NewConfig();
-
-
-
-       
-        
-      
+        config.NewConfig<BookFormat, BookFormatDto>();
     }
 }

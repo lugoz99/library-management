@@ -1,4 +1,5 @@
-﻿namespace LibraryManagement.Models.DTOs;
+﻿// ReSharper disable ClassNeverInstantiated.Global
+namespace LibraryManagement.Models.DTOs;
 
 public record WishListDto(
     int Id,

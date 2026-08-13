@@ -6,24 +6,24 @@ namespace LibraryManagement.Models.DTOs;
 
 [UsedImplicitly]
 public record CreateBookFormatDto(
-    [property: Required(ErrorMessage = "Book is required.")]
+    [Required(ErrorMessage = "Book is required.")]
     Guid BookId,
 
-    [property: Required(ErrorMessage = "Format type is required.")]
-    [property: EnumDataType(typeof(FormatType), ErrorMessage = "Invalid format type.")]
+    [Required(ErrorMessage = "Format type is required.")]
+    [EnumDataType(typeof(FormatType), ErrorMessage = "Invalid format type.")]
     string FormatType,
 
-    [property: Required(ErrorMessage = "Price is required.")]
-    [property: Range(100, 10_000_000, ErrorMessage = "Price must be between 100 and 10000000.")]
+    [Required(ErrorMessage = "Price is required.")]
+    [Range(100, 10_000_000, ErrorMessage = "Price must be between 100 and 10000000.")]
     decimal Price,
 
-    [property: Range(0, 100, ErrorMessage = "Weight must be between 0 and 100.")]
+    [Range(0, 100, ErrorMessage = "Weight must be between 0 and 100.")]
     decimal? Weight,
 
-    [property: Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative.")]
+    [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative.")]
     int? Stock,
 
-    [property: MaxLength(50, ErrorMessage = "Edition cannot be longer than 50 characters.")]
+    [MaxLength(50, ErrorMessage = "Edition cannot be longer than 50 characters.")]
     string? Edition,
 
     bool IsAvailable = true
@@ -31,19 +31,19 @@ public record CreateBookFormatDto(
 
 [UsedImplicitly]
 public record UpdateBookFormatDto(
-    [property: EnumDataType(typeof(FormatType), ErrorMessage = "Invalid format type.")]
+    [EnumDataType(typeof(FormatType), ErrorMessage = "Invalid format type.")]
     string? FormatType,
 
-    [property: Range(100, 10_000_000, ErrorMessage = "Price must be between 100 and 10000000.")]
+    [Range(100, 10_000_000, ErrorMessage = "Price must be between 100 and 10000000.")]
     decimal? Price,
 
-    [property: Range(0, 100, ErrorMessage = "Weight must be between 0 and 100.")]
+    [Range(0, 100, ErrorMessage = "Weight must be between 0 and 100.")]
     decimal? Weight,
 
-    [property: Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative.")]
+    [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative.")]
     int? Stock,
 
-    [property: MaxLength(50, ErrorMessage = "Edition cannot be longer than 50 characters.")]
+    [MaxLength(50, ErrorMessage = "Edition cannot be longer than 50 characters.")]
     string? Edition,
 
     bool? IsAvailable

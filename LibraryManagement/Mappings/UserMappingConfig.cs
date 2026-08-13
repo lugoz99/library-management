@@ -4,16 +4,16 @@ using Mapster;
 
 namespace LibraryManagement.Mappings;
 
-public class PublisherMappingConfig : IRegister
+public class UserMappingConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<CreatePublisherDto, Publisher>()
+        config.NewConfig<CreateUserDto, User>()
             .Ignore(dest => dest.Id);
 
-        config.NewConfig<Publisher, PublisherDto>();
+        config.NewConfig<User, UserDto>();
 
-        config.NewConfig<UpdatePublisherDto, Publisher>()
+        config.NewConfig<UpdateUserDto, User>()
             .IgnoreNullValues(true)
             .Ignore(dest => dest.Id);
     }

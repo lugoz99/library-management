@@ -3,48 +3,55 @@ using JetBrains.Annotations;
 
 namespace LibraryManagement.Models.DTOs;
 
+// ============================================================
+// BOOK - CREATE
+// ============================================================
+
 [UsedImplicitly]
 public record CreateBookDto(
-    [property: Required(ErrorMessage = "Title is required.")]
-    [property: MaxLength(200, ErrorMessage = "Title cannot be longer than 200 characters.")]
+    [Required(ErrorMessage = "Title is required.")]
+    [MaxLength(200, ErrorMessage = "Title cannot be longer than 200 characters.")]
     string Title,
 
-    [property: Required(ErrorMessage = "ISBN is required.")]
-    [property: MaxLength(13, ErrorMessage = "ISBN cannot be longer than 13 characters.")]
+    [Required(ErrorMessage = "ISBN is required.")]
+    [MaxLength(13, ErrorMessage = "ISBN cannot be longer than 13 characters.")]
     string Isbn,
 
-    [property: MaxLength(2000, ErrorMessage = "Description cannot be longer than 2000 characters.")]
+    [MaxLength(2000, ErrorMessage = "Description cannot be longer than 2000 characters.")]
     string? Description,
 
-    [property: Required(ErrorMessage = "Category is required.")]
+    [Required(ErrorMessage = "Category is required.")]
     Guid CategoryId,
 
-    [property: Required(ErrorMessage = "Publisher is required.")]
+    [Required(ErrorMessage = "Publisher is required.")]
     Guid PublisherId,
 
-    [property: Required(ErrorMessage = "Publication date is required.")]
+    [Required(ErrorMessage = "Publication date is required.")]
     DateOnly PublicationDate,
 
-    [property: Range(1, 10000, ErrorMessage = "Page count must be between 1 and 10000.")]
+    [Range(1, 10000, ErrorMessage = "Page count must be between 1 and 10000.")]
     int PagesCount,
 
-    [property: Required(ErrorMessage = "Language is required.")]
-    [property: MaxLength(10, ErrorMessage = "Language cannot be longer than 10 characters.")]
+    [Required(ErrorMessage = "Language is required.")]
+    [MaxLength(10, ErrorMessage = "Language cannot be longer than 10 characters.")]
     string Language,
 
     bool IsAvailable = true
-
 );
+
+// ============================================================
+// BOOK - UPDATE
+// ============================================================
 
 [UsedImplicitly]
 public record UpdateBookDto(
-    [property: MaxLength(200, ErrorMessage = "Title cannot be longer than 200 characters.")]
+    [MaxLength(200, ErrorMessage = "Title cannot be longer than 200 characters.")]
     string? Title = null,
 
-    [property: MaxLength(13, ErrorMessage = "ISBN cannot be longer than 13 characters.")]
+    [MaxLength(13, ErrorMessage = "ISBN cannot be longer than 13 characters.")]
     string? Isbn = null,
 
-    [property: MaxLength(2000, ErrorMessage = "Description cannot be longer than 2000 characters.")]
+    [MaxLength(2000, ErrorMessage = "Description cannot be longer than 2000 characters.")]
     string? Description = null,
 
     Guid? CategoryId = null,
@@ -53,14 +60,18 @@ public record UpdateBookDto(
 
     DateOnly? PublicationDate = null,
 
-    [property: Range(1, 10000, ErrorMessage = "Page count must be between 1 and 10000.")]
+    [Range(1, 10000, ErrorMessage = "Page count must be between 1 and 10000.")]
     int? PagesCount = null,
 
-    [property: MaxLength(10, ErrorMessage = "Language cannot be longer than 10 characters.")]
+    [MaxLength(10, ErrorMessage = "Language cannot be longer than 10 characters.")]
     string? Language = null,
 
     bool? IsAvailable = null
 );
+
+// ============================================================
+// BOOK - LIST RESPONSE (light)
+// ============================================================
 
 [UsedImplicitly]
 public record BookDto(
@@ -77,24 +88,98 @@ public record BookDto(
     string Language
 );
 
+// ============================================================
+// BOOK + AUTHORS - INPUT
+// ============================================================
+
 [UsedImplicitly]
 public record BookAuthorItemDto(
-    [property: Required(ErrorMessage = "Author is required.")]
+    [Required(ErrorMessage = "Author is required.")]
     Guid AuthorId,
 
-    [property: Required(ErrorMessage = "Role is required.")]
-    [property: MaxLength(50, ErrorMessage = "Role cannot be longer than 50 characters.")]
+    [Required(ErrorMessage = "Role is required.")]
+    [MaxLength(50, ErrorMessage = "Role cannot be longer than 50 characters.")]
     string Role
 );
 
 [UsedImplicitly]
 public record AddBookAuthorDto(
-    [property: Required(ErrorMessage = "Author is required.")]
+    [Required(ErrorMessage = "Author is required.")]
     Guid AuthorId,
 
-    [property: Required(ErrorMessage = "Role is required.")]
-    [property: MaxLength(50, ErrorMessage = "Role cannot be longer than 50 characters.")]
+    [Required(ErrorMessage = "Role is required.")]
+    [MaxLength(50, ErrorMessage = "Role cannot be longer than 50 characters.")]
     string Role
+);
+
+[UsedImplicitly]
+public record CreateBookWithAuthorsDto(
+    [Required(ErrorMessage = "Title is required.")]
+    [MaxLength(200, ErrorMessage = "Title cannot be longer than 200 characters.")]
+    string Title,
+
+    [Required(ErrorMessage = "ISBN is required.")]
+    [MaxLength(13, ErrorMessage = "ISBN cannot be longer than 13 characters.")]
+    string Isbn,
+
+    [MaxLength(2000, ErrorMessage = "Description cannot be longer than 2000 characters.")]
+    string? Description,
+
+    [Required(ErrorMessage = "Category is required.")]
+    Guid CategoryId,
+
+    [Required(ErrorMessage = "Publisher is required.")]
+    Guid PublisherId,
+
+    [Required(ErrorMessage = "Publication date is required.")]
+    DateOnly PublicationDate,
+
+    [Range(1, 10000, ErrorMessage = "Page count must be between 1 and 10000.")]
+    int PagesCount,
+
+    [Required(ErrorMessage = "Language is required.")]
+    [MaxLength(10, ErrorMessage = "Language cannot be longer than 10 characters.")]
+    string Language,
+
+    bool IsAvailable = true,
+
+    IReadOnlyList<BookAuthorItemDto>? Authors = null
+);
+
+// ============================================================
+// BOOK + AUTHORS - CREATE RESPONSE (ids only)
+// ============================================================
+
+[UsedImplicitly]
+public record CreateBookWithAuthorsResponseDto(
+    Guid Id,
+    string Title,
+    string Isbn,
+    bool IsAvailable,
+    string? Description,
+    string? CoverImageUrl,
+    Guid CategoryId,
+    Guid PublisherId,
+    DateOnly? PublicationDate,
+    int PagesCount,
+    string Language,
+    IReadOnlyList<BookAuthorItemDto> Authors
+);
+
+// ============================================================
+// BOOK - DETAIL RESPONSE (GetById)
+// ============================================================
+
+[UsedImplicitly]
+public record CategorySummaryDto(
+    Guid Id,
+    string Name
+);
+
+[UsedImplicitly]
+public record PublisherSummaryDto(
+    Guid Id,
+    string Name
 );
 
 [UsedImplicitly]
@@ -113,44 +198,10 @@ public record BookResponseDto(
     bool IsAvailable,
     string? Description,
     string? CoverImageUrl,
-    Guid CategoryId,
-    Guid PublisherId,
     DateOnly? PublicationDate,
     int PagesCount,
     string Language,
+    CategorySummaryDto? Category,
+    PublisherSummaryDto? Publisher,
     IReadOnlyList<BookAuthorResponseDto> Authors
-);
-//##### HANDLE BOOK - AUTHORS #####################
-[UsedImplicitly]
-public record CreateBookAuthorskDto(
-    [property: Required(ErrorMessage = "Title is required.")]
-    [property: MaxLength(200, ErrorMessage = "Title cannot be longer than 200 characters.")]
-    string Title,
-
-    [property: Required(ErrorMessage = "ISBN is required.")]
-    [property: MaxLength(13, ErrorMessage = "ISBN cannot be longer than 13 characters.")]
-    string Isbn,
-
-    [property: MaxLength(2000, ErrorMessage = "Description cannot be longer than 2000 characters.")]
-    string? Description,
-
-    [property: Required(ErrorMessage = "Category is required.")]
-    Guid CategoryId,
-
-    [property: Required(ErrorMessage = "Publisher is required.")]
-    Guid PublisherId,
-
-    [property: Required(ErrorMessage = "Publication date is required.")]
-    DateOnly PublicationDate,
-
-    [property: Range(1, 10000, ErrorMessage = "Page count must be between 1 and 10000.")]
-    int PagesCount,
-
-    [property: Required(ErrorMessage = "Language is required.")]
-    [property: MaxLength(10, ErrorMessage = "Language cannot be longer than 10 characters.")]
-    string Language,
-
-    bool IsAvailable = true,
-
-    List<BookAuthorItemDto>? Authors = null
 );

@@ -1,3 +1,4 @@
+using System.Reflection;
 using FluentResults.Extensions.AspNetCore;
 using LibraryManagement.Data;
 using LibraryManagement.Extensions;
@@ -20,6 +21,7 @@ builder.Configuration.AddEnvironmentVariables();
 // =====================================================
 // Mapster copies data between data entities and DTOs automatically.
 var config = TypeAdapterConfig.GlobalSettings;
+config.Scan(Assembly.GetExecutingAssembly()); 
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 builder.Services.AddMapster();
@@ -67,7 +69,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 
     // Read the XML file to show your code comments inside the API documentation.
-    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var path = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(path);
 });
