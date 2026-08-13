@@ -205,3 +205,14 @@ public record BookResponseDto(
     PublisherSummaryDto? Publisher,
     IReadOnlyList<BookAuthorResponseDto> Authors
 );
+
+
+// UPDATE COVER
+[UsedImplicitly]
+public record UpdateBookCoverDto(
+    IFormFile CoverImage
+);
+
+public record BookCoverResponseDto(
+    string CoverImageUrl
+);

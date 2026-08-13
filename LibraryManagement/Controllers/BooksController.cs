@@ -56,4 +56,15 @@ public class BooksController(IBookService bookService) : ControllerBase
         var result = await bookService.AddAuthorToBookAsync(id, dto, cancellationToken);
         return result.ToActionResult();
     }
+    
+    [HttpPut("id:guiid/cover")]
+    [Consumes("multipart/form-data")]
+    public async Task<ActionResult> UpdateCover(
+        Guid id,
+        [FromForm] UpdateBookCoverDto dto,   
+        CancellationToken cancellationToken = default)
+    {
+        var result = await bookService.UpdateBookCoverAsync(id, dto, cancellationToken);
+        return result.ToActionResult();
+    }
 }

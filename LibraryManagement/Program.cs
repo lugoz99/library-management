@@ -1,8 +1,8 @@
 using System.Reflection;
 using FluentResults.Extensions.AspNetCore;
+using LibraryManagement.Common;
 using LibraryManagement.Data;
 using LibraryManagement.Extensions;
-using LibraryManagement.Helpers;
 using Mapster;
 using MapsterMapper;
 using Scalar.AspNetCore;
@@ -51,6 +51,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // S3 CLOUDFLARE R2
 // =====================================================
 
+builder.Services.ClouldflareServiceExtension();
+
 // =====================================================
 // API AND DOCUMENTATION SERVICES
 // =====================================================
@@ -84,11 +86,9 @@ var app = builder.Build();
 // FLUENT-RESULTS CONFIGURATION
 // =====================================================
 // Get the required services from the system after the application is built.
-var httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 var profile = app.Services.GetRequiredService<FluentResultsEndpointProfile>();
 
 // Give the error profile access to the current HTTP context.
-profile.SetHttpContextProvider(() => httpContextAccessor.HttpContext!);
 
 // Configure FluentResults to use our profile for all HTTP responses.
 AspNetCoreResult.Setup(options =>

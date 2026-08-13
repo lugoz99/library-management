@@ -28,4 +28,10 @@ public interface IBookService
         Guid bookId,
         AddBookAuthorDto dto,
         CancellationToken ct = default);
+    
+    
+    Task<Result<BookCoverResponseDto>> UpdateBookCoverAsync(
+        Guid bookId,
+        UpdateBookCoverDto dto,
+        CancellationToken ct = default);
 }

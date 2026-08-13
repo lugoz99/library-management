@@ -4,6 +4,7 @@ using LibraryManagement.Models;
 using LibraryManagement.Models.DTOs;
 using LibraryManagement.Repository.Interfaces;
 using LibraryManagement.Services.Contracts;
+using LibraryManagement.Services.Files;
 using MapsterMapper;
 using NuGet.Packaging;
 
@@ -12,7 +13,9 @@ namespace LibraryManagement.Services.Implementation;
 public class BookService(
     IBookRepository bookRepository,
     IAuthorRepository authorRepository,
-    IMapper mapper) : IBookService
+    IMapper mapper,
+    IR2StorageService storageService
+    ) : IBookService
 {
     public async Task<Result<IEnumerable<BookDto>>> GetAllBooksAsync(
         CancellationToken cancellationToken = default)
@@ -127,5 +130,47 @@ public class BookService(
         await bookRepository.AddRangeAsync([relation], ct);
 
         return Result.Ok();
+    }
+
+    public async Task<Result<BookCoverResponseDto>> UpdateBookCoverAsync(
+        Guid bookId,
+        UpdateBookCoverDto dto,
+        CancellationToken ct = default)
+    {
+        // Look up the book; fail early if it doesn't exist
+        var book = await bookRepository.GetByIdAsync(bookId, ct);
+        if (book is null)
+            return Result.Fail<BookCoverResponseDto>(new NotFoundError(nameof(Book), bookId));
+
+        // Keep the old cover's key so we can delete it after the update succeeds
+        var oldCoverKey = book.CoverImageKey;
+
+        // Open the uploaded file as a stream to send it to storage
+        await using var stream = dto.CoverImage.OpenReadStream();
+
+        // Upload the new cover image to Cloudflare R2
+        var uploadResult = await storageService.UploadCoverAsync(
+            folder: "books/covers",
+            fileName: dto.CoverImage.FileName,
+            stream: stream,
+            contentType: dto.CoverImage.ContentType,
+            cancellationToken: ct);
+
+        // Stop here if the upload failed (validation error or storage error)
+        if (uploadResult.IsFailed)
+            return Result.Fail<BookCoverResponseDto>(uploadResult.Errors);
+
+        // Save the new cover's url and key on the book
+        book.CoverImageUrl = uploadResult.Value.url;
+        book.CoverImageKey = uploadResult.Value.key;
+
+        await bookRepository.UpdateAsync(book, ct);
+
+        // Delete the old cover from storage now that the book points to the new one
+        if (!string.IsNullOrWhiteSpace(oldCoverKey))
+            await storageService.DeleteAsync(oldCoverKey, ct);
+
+        // Return the new cover url so the caller can update the UI without a re-fetch
+        return Result.Ok(new BookCoverResponseDto(book.CoverImageUrl));
     }
 }
