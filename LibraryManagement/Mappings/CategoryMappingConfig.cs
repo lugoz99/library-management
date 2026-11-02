@@ -1,23 +1,23 @@
 ﻿using LibraryManagement.Models;
-using LibraryManagement.Models.DTOs.Categories;
+using LibraryManagement.Models.DTOs;
 using Mapster;
 
-namespace LibraryManagement.Mappings
+namespace LibraryManagement.Mappings;
+
+public class CategoryMappingConfig : IRegister
 {
-    public class CategoryMappingConfig : IRegister
+    public void Register(TypeAdapterConfig config)
     {
-        public void Register(TypeAdapterConfig config)
-        {
-            // 1. CreateCategoryDto a Category
-            config.NewConfig<CreateCategoryDto, Category>();
+        config.NewConfig<CreateCategoryDto, Category>()
+            .Ignore(dest => dest.Id);
 
-            // 2. Category a CategoryResponse (CORREGIDO: Nombre exacto del record y sintaxis de Mapster)
-            config.NewConfig<Category, CategoryResponseDto>();
+        config.NewConfig<Category, CategoryDto>();
 
-            // 3. UpdateCategoryDto a Category
-            config.NewConfig<UpdateCategoryDto, Category>()
-                .IgnoreNullValues(true)
-                .Ignore(c => c.Id);
-        }
+        config.NewConfig<UpdateCategoryDto, Category>()
+            .IgnoreNullValues(true)
+            .Ignore(dest => dest.Id);
+
+        config.NewConfig<Category, CategoryDetailDto>();
+        config.NewConfig<Category, CategorySummaryDto>();
     }
 }

@@ -3,50 +3,53 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : DbContext(options)
-    {
-        public DbSet<Category> Categories { get; set; }
-
-        public DbSet<SubCategory> SubCategories { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : DbContext(options)
         {
-            base.OnModelCreating(modelBuilder);
+            public DbSet<Category> Categories { get; set; }
+            public DbSet<Publisher> Publishers { get; set; }
+            public DbSet<Author> Authors { get; set; }
+            
+            public DbSet<BookAuthors> BookAuthors { get; set; }
+            public DbSet<Book> Books { get; set; }
+            
+            public DbSet<BookFormat> BookFormats { get; set; }
 
-            modelBuilder.Entity<Category>()
-                .HasIndex(c => c.Name)
-                .IsUnique();
-
-            modelBuilder.Entity<Category>()
-                .HasMany(c => c.SubCategories)
-                .WithOne(s => s.Category)
-                .HasForeignKey(s => s.CategoryId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<SubCategory>()
-                .HasIndex(s => new { s.Name, s.CategoryId })
-                .IsUnique();
-        }
-
-        public override Task<int> SaveChangesAsync(
-            CancellationToken cancellationToken = default)
-        {
-            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            
+            public DbSet<Review> Reviews { get; set; }
+            
+            
+            public DbSet<User> Users { get; set; }
+            
+            public DbSet<WishList> WishLists { get; set; }
+            public DbSet<Promotion> Promotions { get; set; }
+            public DbSet<Order> Orders { get; set; }
+            public DbSet<OrderItem> OrderItems { get; set; }
+            protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
-                switch (entry.State)
-                {
-                    case EntityState.Added:
-                        entry.Entity.CreatedAt = DateTime.UtcNow;
-                        break;
+                // creador de modelos
+                base.OnModelCreating(modelBuilder);
 
-                    case EntityState.Modified:
-                        entry.Entity.UpdatedAt = DateTime.UtcNow;
-                        break;
-                }
+                // Esto busca automáticamente todas las clases que implementen IEntityTypeConfiguration en este ensamblado!
+                modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
             }
 
-            return base.SaveChangesAsync(cancellationToken);
+            public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+            {
+                foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+                {
+                    switch (entry.State)
+                    {
+                        case EntityState.Added:
+                            entry.Entity.CreatedAt = DateTime.UtcNow;
+                            break;
+                        case EntityState.Modified:
+                            entry.Entity.UpdatedAt = DateTime.UtcNow;
+                            break;
+                    }
+                }
+
+                return base.SaveChangesAsync(cancellationToken);
+            }
         }
-    }
 }

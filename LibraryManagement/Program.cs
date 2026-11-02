@@ -1,10 +1,8 @@
+using System.Reflection;
 using FluentResults.Extensions.AspNetCore;
+using LibraryManagement.Common;
 using LibraryManagement.Data;
-using LibraryManagement.Helpers;
-using LibraryManagement.Repository;
-using LibraryManagement.Repository.Interfaces;
-using LibraryManagement.Services.Contracts;
-using LibraryManagement.Services.Implementation;
+using LibraryManagement.Extensions;
 using Mapster;
 using MapsterMapper;
 using Scalar.AspNetCore;
@@ -23,6 +21,7 @@ builder.Configuration.AddEnvironmentVariables();
 // =====================================================
 // Mapster copies data between data entities and DTOs automatically.
 var config = TypeAdapterConfig.GlobalSettings;
+config.Scan(Assembly.GetExecutingAssembly()); 
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 builder.Services.AddMapster();
@@ -49,6 +48,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         sqlServerOptions.EnableRetryOnFailure()));
 
 // =====================================================
+// S3 CLOUDFLARE R2
+// =====================================================
+
+builder.Services.ClouldflareServiceExtension();
+
+// =====================================================
 // API AND DOCUMENTATION SERVICES
 // =====================================================
 builder.Services.AddControllers();
@@ -66,17 +71,14 @@ builder.Services.AddSwaggerGen(options =>
     });
 
     // Read the XML file to show your code comments inside the API documentation.
-    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var path = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(path);
 });
 
 // Register repositories and services in the Dependency Injection container.
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ISubCategoryRepository, SubCategoryRepository>();
-
-builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<ISubCategoryService, SubCategoryService>();
+builder.Services.AddRepositories();
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
@@ -84,11 +86,9 @@ var app = builder.Build();
 // FLUENT-RESULTS CONFIGURATION
 // =====================================================
 // Get the required services from the system after the application is built.
-var httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 var profile = app.Services.GetRequiredService<FluentResultsEndpointProfile>();
 
 // Give the error profile access to the current HTTP context.
-profile.SetHttpContextProvider(() => httpContextAccessor.HttpContext!);
 
 // Configure FluentResults to use our profile for all HTTP responses.
 AspNetCoreResult.Setup(options =>
