@@ -34,7 +34,8 @@ public class Book:BaseEntity
     
     public ICollection<Review> Reviews { get; set; } = [];
     
-    public ICollection<WishList> WishLists { get; set; } = [];
+    public ICollection<WishListItem> WishListItems { get; set; } = [];
+    public ICollection<Promotion> Promotions { get; set; } = [];
 
 
 }

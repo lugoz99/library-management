@@ -7,6 +7,7 @@ public class BookFormat:BaseEntity
     public FormatType? FormatType { get; set; }
     public decimal Price { get; set; }
     public decimal? Weight { get;set; }
+    
     public bool IsAvailable { get; set; } = true;
     public int? Stock {get;set;}
     public Guid BookId { get; set; }

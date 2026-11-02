@@ -22,33 +22,6 @@ namespace LibraryManagement.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BookWishList", b =>
-                {
-                    b.Property<Guid>("BooksId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("WishListsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("BookId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("WishListId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("BooksId", "WishListsId");
-
-                    b.HasIndex("BookId");
-
-                    b.HasIndex("WishListsId");
-
-                    b.HasIndex("WishListId", "BookId")
-                        .IsUnique()
-                        .HasFilter("[WishListId] IS NOT NULL AND [BookId] IS NOT NULL");
-
-                    b.ToTable("WishListItem", (string)null);
-                });
-
             modelBuilder.Entity("LibraryManagement.Models.Author", b =>
                 {
                     b.Property<Guid>("Id")
@@ -262,6 +235,146 @@ namespace LibraryManagement.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("LibraryManagement.Models.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StripeCheckoutSessionId")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("StripePaymentIntentId")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StripeCheckoutSessionId")
+                        .IsUnique()
+                        .HasFilter("[StripeCheckoutSessionId] IS NOT NULL");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("LibraryManagement.Models.OrderItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BookFormatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BookTitle")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookFormatId");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("LibraryManagement.Models.Promotion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("DiscountType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("DiscountValue")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("EndsAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<DateTime>("StartsAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId", "StartsAt", "EndsAt");
+
+                    b.ToTable("Promotions");
+                });
+
             modelBuilder.Entity("LibraryManagement.Models.Publisher", b =>
                 {
                     b.Property<Guid>("Id")
@@ -334,16 +447,11 @@ namespace LibraryManagement.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("Reviews");
                 });
@@ -399,9 +507,6 @@ namespace LibraryManagement.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Title")
@@ -409,32 +514,22 @@ namespace LibraryManagement.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId1");
-
                     b.ToTable("WishLists");
                 });
 
-            modelBuilder.Entity("BookWishList", b =>
+            modelBuilder.Entity("LibraryManagement.Models.WishListItem", b =>
                 {
-                    b.HasOne("LibraryManagement.Models.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BookId");
+                    b.Property<Guid>("WishListId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasOne("LibraryManagement.Models.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasOne("LibraryManagement.Models.WishList", null)
-                        .WithMany()
-                        .HasForeignKey("WishListId");
+                    b.HasKey("WishListId", "BookId");
 
-                    b.HasOne("LibraryManagement.Models.WishList", null)
-                        .WithMany()
-                        .HasForeignKey("WishListsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasIndex("BookId");
+
+                    b.ToTable("WishListItems", (string)null);
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.Book", b =>
@@ -496,6 +591,55 @@ namespace LibraryManagement.Migrations
                     b.Navigation("ParentCategory");
                 });
 
+            modelBuilder.Entity("LibraryManagement.Models.Order", b =>
+                {
+                    b.HasOne("LibraryManagement.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LibraryManagement.Models.OrderItem", b =>
+                {
+                    b.HasOne("LibraryManagement.Models.BookFormat", "BookFormat")
+                        .WithMany()
+                        .HasForeignKey("BookFormatId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("LibraryManagement.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("LibraryManagement.Models.Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("BookFormat");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("LibraryManagement.Models.Promotion", b =>
+                {
+                    b.HasOne("LibraryManagement.Models.Book", "Book")
+                        .WithMany("Promotions")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
             modelBuilder.Entity("LibraryManagement.Models.Review", b =>
                 {
                     b.HasOne("LibraryManagement.Models.Book", "Book")
@@ -505,14 +649,10 @@ namespace LibraryManagement.Migrations
                         .IsRequired();
 
                     b.HasOne("LibraryManagement.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Reviews")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("LibraryManagement.Models.User", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("UserId1");
 
                     b.Navigation("Book");
 
@@ -522,16 +662,31 @@ namespace LibraryManagement.Migrations
             modelBuilder.Entity("LibraryManagement.Models.WishList", b =>
                 {
                     b.HasOne("LibraryManagement.Models.User", "User")
-                        .WithMany()
+                        .WithMany("WishLists")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LibraryManagement.Models.User", null)
-                        .WithMany("WishLists")
-                        .HasForeignKey("UserId1");
-
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LibraryManagement.Models.WishListItem", b =>
+                {
+                    b.HasOne("LibraryManagement.Models.Book", "Book")
+                        .WithMany("WishListItems")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LibraryManagement.Models.WishList", "WishList")
+                        .WithMany("Items")
+                        .HasForeignKey("WishListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("WishList");
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.Author", b =>
@@ -545,7 +700,11 @@ namespace LibraryManagement.Migrations
 
                     b.Navigation("BooksFormats");
 
+                    b.Navigation("Promotions");
+
                     b.Navigation("Reviews");
+
+                    b.Navigation("WishListItems");
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.Category", b =>
@@ -553,6 +712,11 @@ namespace LibraryManagement.Migrations
                     b.Navigation("Books");
 
                     b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("LibraryManagement.Models.Order", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.Publisher", b =>
@@ -565,6 +729,11 @@ namespace LibraryManagement.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("WishLists");
+                });
+
+            modelBuilder.Entity("LibraryManagement.Models.WishList", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

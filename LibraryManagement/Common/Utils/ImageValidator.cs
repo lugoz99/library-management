@@ -20,9 +20,6 @@ public static class ExtensionValidator
 
         var extension = Path.GetExtension(fileName);
 
-        if (!AllowedExtensions.Contains(extension))
-            return Result.Fail(new ValidationError("fileName", "Only JPG, JPEG and PNG files are allowed."));
-
-        return Result.Ok();
+        return !AllowedExtensions.Contains(extension) ? Result.Fail(new ValidationError("fileName", "Only JPG, JPEG and PNG files are allowed.")) : Result.Ok();
     }
 }

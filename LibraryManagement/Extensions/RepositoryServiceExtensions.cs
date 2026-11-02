@@ -13,6 +13,9 @@ public static class RepositoryServiceExtensions
         services.AddScoped<IBookRepository, BookRepository>();
         services.AddScoped<IBookFormatRepository, BookFormatRepository>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IWishListRepository, WishListRepository>();
+        services.AddScoped<IPromotionRepository, PromotionRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
 
         return services;
     }

@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using LibraryManagement.Common.Errors;
 using LibraryManagement.Common.Exceptions;
+using LibraryManagement.Helpers.Errors;
 using LibraryManagement.Models;
 using LibraryManagement.Models.DTOs;
 using LibraryManagement.Repository.Interfaces;
@@ -19,6 +20,9 @@ public class WishListService(IWishListRepository wishlistRepository,IMapper mapp
 
     public async Task<Result<WishListDto>> AddAsync(CreateWishListDto wishList, CancellationToken cancellationToken = default)
     {
+        if (!await wishlistRepository.UserExistsAsync(wishList.UserId, cancellationToken))
+            return Result.Fail<WishListDto>(new NotFoundError(nameof(User), wishList.UserId));
+
         var wishlist = mapper.Map<WishList>(wishList);
 
         try
@@ -30,6 +34,32 @@ public class WishListService(IWishListRepository wishlistRepository,IMapper mapp
         {
             return Result.Fail(new DuplicateEntityError(ex.EntityName, ex.FieldName).CausedBy(ex));
         }
+    }
+
+    public async Task<Result> AddItemAsync(Guid wishListId, AddWishListItemDto item, CancellationToken cancellationToken = default)
+    {
+        var wishlist = await wishlistRepository.GetByIdAsync(wishListId, cancellationToken);
+        if (wishlist is null) return Result.Fail(new NotFoundError(nameof(WishList), wishListId));
+        if (!await wishlistRepository.BookExistsAsync(item.BookId, cancellationToken))
+            return Result.Fail(new NotFoundError(nameof(Book), item.BookId));
+
+        try
+        {
+            await wishlistRepository.AddItemAsync(new WishListItem { WishListId = wishListId, BookId = item.BookId }, cancellationToken);
+            return Result.Ok();
+        }
+        catch (DuplicateEntityException ex)
+        {
+            return Result.Fail(new DuplicateEntityError(ex.EntityName, ex.FieldName).CausedBy(ex));
+        }
+    }
+
+    public async Task<Result> RemoveItemAsync(Guid wishListId, Guid bookId, CancellationToken cancellationToken = default)
+    {
+        var item = await wishlistRepository.GetItemAsync(wishListId, bookId, cancellationToken);
+        if (item is null) return Result.Fail(new NotFoundError("Wishlist item", bookId));
+        await wishlistRepository.RemoveItemAsync(item, cancellationToken);
+        return Result.Ok();
     }
 
     public async Task<Result> DeleteAsync(Guid id, CancellationToken cancellationToken = default)

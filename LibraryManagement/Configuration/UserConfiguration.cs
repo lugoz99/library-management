@@ -8,7 +8,7 @@ public class UserConfiguration:IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.HasMany<Review>()
+        builder.HasMany(user => user.Reviews)
             .WithOne(r => r.User)
             .HasForeignKey(r => r.UserId)
             .OnDelete(DeleteBehavior.Restrict);

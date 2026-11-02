@@ -7,5 +7,7 @@ public interface IWishListService
 {
     Task<Result<IEnumerable<WishListDto>>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<Result<WishListDto>>AddAsync(CreateWishListDto wishList, CancellationToken cancellationToken = default);
+    Task<Result> AddItemAsync(Guid wishListId, AddWishListItemDto item, CancellationToken cancellationToken = default);
+    Task<Result> RemoveItemAsync(Guid wishListId, Guid bookId, CancellationToken cancellationToken = default);
     Task<Result> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }

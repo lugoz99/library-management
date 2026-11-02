@@ -13,6 +13,9 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IBookService, BookService>();
         services.AddScoped<IBookFormatService, BookFormatService>();
         services.AddScoped<IReviewService, ReviewService>();
+        services.AddScoped<IWishListService, WishListService>();
+        services.AddScoped<IPromotionService, PromotionService>();
+        services.AddScoped<IOrderService, OrderService>();
 
         return services;
     }

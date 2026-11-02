@@ -14,21 +14,16 @@ public class WishListConfiguration:IEntityTypeConfiguration<WishList>
         builder.HasIndex(wl => wl.Title).IsUnique();
         // Relación uno-a-muchos: un usuario puede tener varias wishlists
         builder.HasOne(wl => wl.User)
-            .WithMany() // o .WithMany(u => u.WishLists) si agregas la colección en User
+            .WithMany(user => user.WishLists)
             .HasForeignKey(wl => wl.UserId)
             .OnDelete(DeleteBehavior.Cascade);
         
         
         
         
-        builder.HasMany(wl => wl.Books)
-            .WithMany(b => b.WishLists)
-            .UsingEntity(j =>
-            {
-                j.ToTable("WishListItem");
-                j.HasOne(typeof(Book)).WithMany().HasForeignKey("BookId");
-                j.HasOne(typeof(WishList)).WithMany().HasForeignKey("WishListId");
-                j.HasIndex("WishListId", "BookId").IsUnique();
-            });
+        builder.HasMany(wl => wl.Items)
+            .WithOne(item => item.WishList)
+            .HasForeignKey(item => item.WishListId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

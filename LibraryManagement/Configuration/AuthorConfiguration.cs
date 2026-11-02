@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+// FLUENT VALIDATION
 namespace LibraryManagement.Configuration;
 
 public class AuthorConfiguration : IEntityTypeConfiguration<Author>

@@ -9,5 +9,5 @@ public class WishList:BaseEntity
     // Cada wishlist pertenece a un usuario
     public Guid UserId { get; set; }
     public User? User { get; set; }
-    public ICollection<Book> Books { get; set; } = [];
+    public ICollection<WishListItem> Items { get; set; } = [];
 }
